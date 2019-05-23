@@ -11,7 +11,8 @@ from filter.kalman import Kalman3D
 if sys.version_info[0] != 3:
     print("This script requires Python 3")
     sys.exit(1)
-    
+
+DEBUG = 0    
 
 
 if __name__ == '__main__':
@@ -49,8 +50,9 @@ This script will print the output trajectory.
     numpos = len(args.positions)//3
     print("{} input positions given.".format(numpos))
     positions = positions.reshape(numpos, 3)
-    print("positions shape", positions.shape)
-    print(positions)
+    if DEBUG:
+        print("positions shape", positions.shape)
+        print(positions)
     ##-#######################################################################################
     ## Instantiate Kalman3D tracker
     ##-#######################################################################################
@@ -61,15 +63,15 @@ This script will print the output trajectory.
     ## Tracking
     ## Since we are doing all operations in zero time, specify dT manually (e.g., 0.033 sec)
     for i in range(positions.shape[0]-1):
-        pred = KF.track(positions[i+1], 0.033)
+        pred = KF.track(positions[i+1], 0.033)*1000
         print("  tracked position : {}".format(pred))
 
     
     ##-#######################################################################################
     ## Trajectory prediction
     ## Since we are doing all operations in zero time, specify dT manually (e.g., 0.033 sec)
-    for i in range(20):
-        pred = KF.predict(0.033)
+    for i in range(args.npred):
+        pred = KF.predict(0.033)*1000
         print("predicted position : {}".format(pred))
         
 
